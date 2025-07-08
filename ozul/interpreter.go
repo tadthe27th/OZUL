@@ -25,12 +25,11 @@ func NewInterpreter() *Interpreter {
 func (it *Interpreter) Run(program *Program) {
 	const maxSteps = 10000
 	steps := 0
-	for i, stmt := range program.Statements {
+	for _, stmt := range program.Statements {
 		steps++
 		if steps > maxSteps {
 			panic("[OZUL Error] Execution step limit exceeded (possible infinite loop)")
 		}
-		fmt.Printf("[DEBUG] Executing statement %d: %T\n", i, stmt)
 		it.execStatement(stmt)
 	}
 }
@@ -38,11 +37,9 @@ func (it *Interpreter) Run(program *Program) {
 func (it *Interpreter) execStatement(stmt Statement) {
 	switch s := stmt.(type) {
 	case *DeclarationStmt:
-		fmt.Printf("[DEBUG] Declaration: %s %s is ...\n", s.PokemonType, s.Name)
 		val := it.evalExpression(s.Value)
 		it.vars[s.Name] = val
 	case *AssignmentStmt:
-		fmt.Printf("[DEBUG] Assignment: %s evolves to ...\n", s.Name)
 		val := it.evalExpression(s.Value)
 		if _, ok := it.vars[s.Name]; ok {
 			it.vars[s.Name] = val
@@ -50,13 +47,12 @@ func (it *Interpreter) execStatement(stmt Statement) {
 			panic(fmt.Sprintf("[OZUL Error] Variable not declared: %s", s.Name))
 		}
 	case *ReleaseStmt:
-		fmt.Printf("[DEBUG] Release: ...\n")
 		val := it.evalExpression(s.Value)
 		it.printValue(val)
 	case *CatchStmt:
-		fmt.Printf("[DEBUG] Catch: %s\n", s.Variable)
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Printf("Enter value for %s: ", s.Variable)
+		os.Stdout.Sync() // Flush output buffer so prompt is visible
 		input, _ := reader.ReadString('\n')
 		input = input[:len(input)-1] // remove newline
 		// Default to int, could be improved
@@ -71,26 +67,20 @@ func (it *Interpreter) execStatement(stmt Statement) {
 }
 
 func (it *Interpreter) evalExpression(expr Expression) Value {
-	fmt.Printf("[DEBUG] Evaluating expression: %T\n", expr)
 	switch e := expr.(type) {
 	case *NumberLiteral:
-		fmt.Printf("[DEBUG] NumberLiteral: %d\n", e.Value)
 		return Value{Type: "int", Int: e.Value}
 	case *FloatLiteral:
-		fmt.Printf("[DEBUG] FloatLiteral: %f\n", e.Value)
 		return Value{Type: "float", Float: e.Value}
 	case *StringLiteral:
-		fmt.Printf("[DEBUG] StringLiteral: %s\n", e.Value)
 		return Value{Type: "string", Str: e.Value}
 	case *Identifier:
-		fmt.Printf("[DEBUG] Identifier: %s\n", e.Name)
 		v, ok := it.vars[e.Name]
 		if !ok {
 			panic(fmt.Sprintf("[OZUL Error] Undefined variable: %s", e.Name))
 		}
 		return v
 	case *BinaryExpr:
-		fmt.Printf("[DEBUG] BinaryExpr: %T %s %T\n", e.Left, e.Operator, e.Right)
 		left := it.evalExpression(e.Left)
 		right := it.evalExpression(e.Right)
 		if e.Operator == "+" && (left.Type == "string" || right.Type == "string") {

@@ -21,8 +21,12 @@ func NewParser(tokens []Token) *Parser {
 
 func (p *Parser) Parse() *Program {
 	program := &Program{Statements: []Statement{}}
-
+	loopCount := 0
 	for p.cur.Type != EOF {
+		loopCount++
+		if loopCount > 1000 {
+			break
+		}
 		if p.cur.Type == NEWLINE {
 			p.nextToken()
 			continue
@@ -38,37 +42,27 @@ func (p *Parser) Parse() *Program {
 			p.nextToken()
 		}
 	}
-
 	return program
 }
 
 func (p *Parser) parseStatement() Statement {
-	// fmt.Printf("[DEBUG] parseStatement: cur.Type=%v cur.Value=%q\n", p.cur.Type, p.cur.Value)
 	switch p.cur.Type {
 	case PIKACHU, PSYDUCK, EEVEE:
-		// fmt.Println("[DEBUG] Declaration branch")
 		return p.parseDeclaration()
 	case IDENTIFIER:
 		if p.peek().Type == EVOLVES_TO {
-			// fmt.Println("[DEBUG] Assignment branch")
 			return p.parseAssignment()
 		}
-		// fmt.Println("[DEBUG] Expression-as-release branch (identifier)")
 		return p.parseExpressionStatement()
 	case RELEASE:
-		// fmt.Println("[DEBUG] Release branch")
 		return p.parseRelease()
 	case CATCH:
-		// fmt.Println("[DEBUG] Catch branch")
 		return p.parseCatch()
 	case NEWLINE:
-		// fmt.Println("[DEBUG] Skipping NEWLINE in parseStatement")
 		return nil
 	case EOF:
-		// fmt.Println("[DEBUG] EOF in parseStatement")
 		return nil
 	default:
-		// fmt.Println("[DEBUG] Expression-as-release branch (default)")
 		return p.parseExpressionStatement()
 	}
 }
@@ -79,6 +73,7 @@ func (p *Parser) parseDeclaration() Statement {
 
 	if p.cur.Type != IDENTIFIER {
 		p.addError("expected identifier after Pokemon type")
+		p.nextToken()
 		return nil
 	}
 	name := p.cur.Value
@@ -86,6 +81,7 @@ func (p *Parser) parseDeclaration() Statement {
 
 	if p.cur.Type != IS {
 		p.addError("expected 'is' after identifier")
+		p.nextToken()
 		return nil
 	}
 	p.nextToken() // consume 'is'
@@ -105,12 +101,14 @@ func (p *Parser) parseAssignment() Statement {
 
 	if p.cur.Type != EVOLVES_TO {
 		p.addError("expected 'evolves' after identifier")
+		p.nextToken()
 		return nil
 	}
 	p.nextToken() // consume 'evolves'
 
 	if p.cur.Type != IDENTIFIER || p.cur.Value != "to" {
 		p.addError("expected 'to' after 'evolves'")
+		p.nextToken()
 		return nil
 	}
 	p.nextToken() // consume 'to'
@@ -135,6 +133,7 @@ func (p *Parser) parseCatch() Statement {
 
 	if p.cur.Type != IDENTIFIER {
 		p.addError("expected identifier after 'catch'")
+		p.nextToken()
 		return nil
 	}
 	variable := p.cur.Value
@@ -142,12 +141,14 @@ func (p *Parser) parseCatch() Statement {
 
 	if p.cur.Type != FROM {
 		p.addError("expected 'from' after identifier")
+		p.nextToken()
 		return nil
 	}
 	p.nextToken() // consume 'from'
 
 	if p.cur.Type != TRAINER {
 		p.addError("expected 'trainer' after 'from'")
+		p.nextToken()
 		return nil
 	}
 	p.nextToken() // consume 'trainer'
@@ -205,6 +206,7 @@ func (p *Parser) parsePrimary() Expression {
 		return &Identifier{Name: name}
 	default:
 		p.addError("unexpected token: " + p.cur.Value)
+		p.nextToken()
 		return nil
 	}
 }
