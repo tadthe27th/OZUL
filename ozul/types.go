@@ -15,11 +15,11 @@ const (
 
 	// Keywords
 	IS         // =
-	EVOLVES_TO // = (reassignment)
+	HAS_LEVEL // = (reassignment)
 	CATCH      // input
 	RELEASE    // print
 	FROM       // from
-	TRAINER    // trainer
+	WILDGRASS    // wildgrass
 
 	// Literals
 	NUMBER     // 123
@@ -81,7 +81,7 @@ type AssignmentStmt struct {
 }
 
 func (a *AssignmentStmt) String() string {
-	return fmt.Sprintf("%s evolves to %s", a.Name, a.Value.String())
+	return fmt.Sprintf("%s has level %s", a.Name, a.Value.String())
 }
 
 // Output: "release health"
@@ -93,13 +93,13 @@ func (r *ReleaseStmt) String() string {
 	return fmt.Sprintf("release %s", r.Value.String())
 }
 
-// Input: "catch userInput from trainer"
+// Input: "catch userInput from wildgrass"
 type CatchStmt struct {
 	Variable string
 }
 
 func (c *CatchStmt) String() string {
-	return fmt.Sprintf("catch %s from trainer", c.Variable)
+	return fmt.Sprintf("catch %s from wildgrass", c.Variable)
 }
 
 // Binary operations: "10 + 5"
