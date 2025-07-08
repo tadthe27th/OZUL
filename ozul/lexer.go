@@ -157,8 +157,8 @@ func lookupIdentOrKeyword(ident string) TokenType {
 		return RELEASE
 	case "from":
 		return FROM
-	case "trainer":
-		return TRAINER
+	case "wildgrass":
+		return WILDGRASS
 	default:
 		return IDENTIFIER
 	}
