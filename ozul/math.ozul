@@ -1,0 +1,4 @@
+Pikachu health is 100
+Psyduck damage is 25.5
+Psyduck newHealth is health - damage
+release newHealth

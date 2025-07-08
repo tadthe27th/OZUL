@@ -1,0 +1,18 @@
+Pikachu health is 100
+Psyduck speed is 3.14
+Eevee name is "Abhronkosh"
+
+health evolves to health + 20
+speed evolves to speed * 2.0
+
+Eevee greeting is "Hello" + " Pokemon!"
+
+release health
+release speed
+release name
+release greeting
+
+catch userInput from trainer
+userInput evolves to userInput + 23
+
+release userInput 

@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main() {
+    int health = 100;
+    double speed = 3.140000;
+    char* name = "Sparky";
+    health = (health + 20);
+    speed = (speed * 2.000000);
+    char* greeting = "concatenated_string";
+    printf("%!d(string=health)\n", health);
+    printf("%!f(string=speed)\n", speed);
+    printf("name\n", name);
+    printf("greeting\n", greeting);
+    int userInput;
+    scanf("%!d(string=userInput)", &userInput);
+    printf("%!d(string=userInput)\n", userInput);
+    return 0;
+}

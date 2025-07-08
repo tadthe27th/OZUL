@@ -1,0 +1,15 @@
+Pikachu health is 100
+Psyduck speed is 3.14
+Eevee name is "Pikachu"
+
+health evolves to health + 50
+speed evolves to speed / 2.0
+Eevee greeting is "Hello, " + name
+
+release health
+release speed
+release greeting
+
+catch userInput from trainer
+userInput evolves to userInput + 52
+release userInput
